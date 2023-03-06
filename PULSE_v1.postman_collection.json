@@ -1,0 +1,149 @@
+{
+	"info": {
+		"_postman_id": "83f8dad3-1c04-450d-ba44-90afa0c1b4f2",
+		"name": "PULSE_v1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25612573"
+	},
+	"item": [
+		{
+			"name": "LOGIN",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Asserting User Is Able To Login successfully\");\r",
+							"\r",
+							"//This is a POST request, So if the user is able to login it will give [Status 200 Ok] message.\r",
+							"//This function will check that\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.variables.get(\"{{Pulse_username}}\");\r",
+							"pm.variables.get(\"{{Pulse_password}}\");\r",
+							"\r",
+							"//Extract value from API response Body \r",
+							"pm.test(\"Method to extract access-token from the response Body\", function () {\r",
+							"   var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"   //This will extract the value of access-token from API request Body\r",
+							"   pm.globals.set(\"Pulse_access-token\", jsonData.data.attributes['access-token']);\r",
+							"   //jsonData.data.attributes['employee-id'];\r",
+							"});\r",
+							"\r",
+							"\r",
+							"//Another way to Extract value from API response Body\r",
+							"//This method will create Duplicate \r",
+							"pm.test(\"Getting Value From json\", function () {\r",
+							"    let jsonData = pm.response.json()\r",
+							"   pm.globals.set(\"Duplicate_Token\",jsonData.data.attributes['access-token']);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"//Method that will print extracted value of access-token from Response Body\r",
+							"pm.test(\"Printing Globals Values Set In Above\" , function(){\r",
+							"    \r",
+							"    console.log(\"Access token values is: \"+pm.globals.get(\"Pulse_access-token\"));\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//Test Case Title\r",
+							"console.info(\"Perfoming First Test of Login With Valid Credentials\");\r",
+							"\r",
+							"//Getting URL from variable define and printing the value \r",
+							"var urlValue = pm.variables.get(\"url\");\r",
+							"console.info(\"Navigating to the URL: \"+ urlValue);\r",
+							"\r",
+							"//For getting Username, that is defined in Global variable. \r",
+							"var username = pm.globals.get(\"Pulse_username\");\r",
+							"\r",
+							"//Printing Username defined in Global Variable\r",
+							"console.info(\"Sending Usernmae as: \"+ username);\r",
+							"\r",
+							"//For getting Password, that is defined in Global variable and printing Password defined in Global Variable. \r",
+							"console.info(\"Sending Password as: \"+pm.globals.get(\"Pulse_password\"));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{    \r\n    \"data\": \r\n    {        \r\n        \"type\": \"auth\",        \r\n        \"attributes\": \r\n        {            \r\n            \"userName\": \"{{Pulse_username}}\",            \r\n            \"password\": \"{{Pulse_password}}\",            \r\n            \"aud\": \"\",            \r\n            \"keepMeLoggedIn\": \"True\"        \r\n        }    \r\n    },    \r\n    \r\n    \"included\": []\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/auth/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "https://dev-pulse.10pearls.com/cogsapi/api",
+			"type": "string"
+		}
+	]
+}
